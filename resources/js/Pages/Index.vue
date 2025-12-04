@@ -6,7 +6,7 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, D
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Switch } from '@/components/ui/switch';
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { dashboard } from '@/routes';
 import { type BreadcrumbItem } from '@/types';
 import { Head, useForm, router } from '@inertiajs/vue3';
@@ -243,9 +243,20 @@ const saveOrder = () => {
                                     </div>
                                 </div>
 
-                                <div class="flex items-center space-x-2">
-                                    <Switch id="is_active" v-model:checked="form.is_active" />
-                                    <Label for="is_active">Active</Label>
+                                <div class="grid gap-2">
+                                    <Label>Status</Label>
+                                    <RadioGroup :model-value="form.is_active ? 'active' : 'inactive'"
+                                        @update:model-value="(val) => form.is_active = val === 'active'"
+                                        class="flex gap-4">
+                                        <div class="flex items-center space-x-2">
+                                            <RadioGroupItem id="status-active" value="active" />
+                                            <Label for="status-active">Active</Label>
+                                        </div>
+                                        <div class="flex items-center space-x-2">
+                                            <RadioGroupItem id="status-inactive" value="inactive" />
+                                            <Label for="status-inactive">Inactive</Label>
+                                        </div>
+                                    </RadioGroup>
                                 </div>
                             </div>
                             <DialogFooter>
@@ -334,9 +345,19 @@ const saveOrder = () => {
                             </div>
                         </div>
 
-                        <div class="flex items-center space-x-2">
-                            <Switch id="edit-is_active" v-model:checked="form.is_active" />
-                            <Label for="edit-is_active">Active</Label>
+                        <div class="grid gap-2">
+                            <Label>Status</Label>
+                            <RadioGroup :model-value="form.is_active ? 'active' : 'inactive'"
+                                @update:model-value="(val) => form.is_active = val === 'active'" class="flex gap-4">
+                                <div class="flex items-center space-x-2">
+                                    <RadioGroupItem id="edit-status-active" value="active" />
+                                    <Label for="edit-status-active">Active</Label>
+                                </div>
+                                <div class="flex items-center space-x-2">
+                                    <RadioGroupItem id="edit-status-inactive" value="inactive" />
+                                    <Label for="edit-status-inactive">Inactive</Label>
+                                </div>
+                            </RadioGroup>
                         </div>
                     </div>
                     <DialogFooter>
