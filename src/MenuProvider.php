@@ -12,7 +12,10 @@ class MenuProvider extends ServiceProvider
      */
     public function register(): void
     {
-        //
+        $this->mergeConfigFrom(
+            __DIR__ . '/../config/menu.php',
+            'dishari'
+        );
     }
 
     /**
@@ -20,7 +23,7 @@ class MenuProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        $this->mergeConfigFrom(__DIR__ . '/../config/menu.php', 'menu');
+        $this->mergeConfigFrom(__DIR__ . '/../config/menu.php', 'dishari');
 
         // Load migrations
         $this->loadMigrationsFrom(__DIR__ . '/../database/migrations');
@@ -28,5 +31,19 @@ class MenuProvider extends ServiceProvider
         // Load routes with web middleware group
         Route::middleware('web')
             ->group(__DIR__ . '/../routes/web.php');
+
+        // 1. Publish config file
+        $this->publishes([
+            __DIR__ . '/../config/menu.php' => config_path('dishari.php'),
+        ], 'dishari-config');
+
+        // 2. Get folder name from config (default is 'Menu')
+        $dirName = config('menu.directory_name', 'dishari');
+
+        // 3. Set dynamic path
+        $this->publishes([
+            __DIR__ . '/../resources/js/Pages' => resource_path("js/Pages/{$dirName}"),
+            __DIR__ . '/../resources/js/Components' => resource_path("js/Components/{$dirName}"),
+        ], 'dishari-views');
     }
 }
