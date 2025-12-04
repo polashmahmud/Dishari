@@ -26,20 +26,33 @@ class InstallDishari extends Command
 
     public function handle(): int
     {
-        $this->info('Publishing Dishari configuration and views...');
+        $this->info('Starting Dishari installation...');
 
-        $this->call('vendor:publish', [
-            '--tag' => 'dishari-config',
-            '--force' => true,
-        ]);
+        // 1. Ask to publish the configuration file
+        if ($this->confirm('Do you want to publish the configuration file?', true)) {
+            $this->call('vendor:publish', [
+                '--tag' => 'dishari-config'
+            ]);
+            $this->info('Configuration published successfully!');
+        } else {
+            $this->comment('Skipping configuration publishing.');
+        }
 
-        $this->call('vendor:publish', [
-            '--tag' => 'dishari-views',
-            '--force' => true,
-        ]);
+        // 2. Ask to publish VueJS Views (Pages & Components)
+        if ($this->confirm('Do you want to publish VueJS Views (Pages & Components)?', true)) {
+            // Note: If the user wants to change the path by editing the config,
+            // they should publish the config first and edit it.
+            // Here, it will be published according to the default config.
 
-        $this->info('Dishari Menu Package installed successfully.');
+            $this->call('vendor:publish', [
+                '--tag' => 'dishari-views'
+            ]);
+            $this->info('Views published successfully!');
+        } else {
+            $this->comment('Skipping views publishing.');
+        }
 
+        $this->info('Dishari installation completed successfully! 🚀');
         return Command::SUCCESS;
     }
 }
