@@ -20,13 +20,13 @@ class MenuProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        $this->mergeConfigFrom(__DIR__ . '/../../config/menu.php', 'menu');
+        $this->mergeConfigFrom(__DIR__ . '/../config/menu.php', 'menu');
 
         // Load migrations
-        $this->loadMigrationsFrom(__DIR__ . '/../../database/migrations');
+        $this->loadMigrationsFrom(__DIR__ . '/../database/migrations');
 
         // Load routes with web middleware group
         Route::middleware('web')
-            ->group(__DIR__ . '/../../routes/web.php');
+            ->group(__DIR__ . '/../routes/web.php');
     }
 }
