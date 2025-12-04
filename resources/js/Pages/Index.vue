@@ -11,7 +11,7 @@ import { dashboard } from '@/routes';
 import { type BreadcrumbItem } from '@/types';
 import { Head, useForm, router } from '@inertiajs/vue3';
 import { ref, computed, watch } from 'vue';
-import MenuDraggableList from '../Components/MenuDraggableList.vue';
+import MenuDraggableList from './MenuDraggableList.vue';
 import { toast } from 'vue-sonner';
 import { iconOptions } from '@/iconMap';
 import { Plus, Save, Ban } from 'lucide-vue-next';

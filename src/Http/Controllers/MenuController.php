@@ -21,7 +21,9 @@ class MenuController extends Controller
                 return $this->formatMenuForTree($menu);
             });
 
-        return Inertia::render('Menu/Index', [
+        $dirName = config('dishari.directory_name', 'dishari');
+
+        return Inertia::render("{$dirName}/Index", [
             'menuList' => $menus,
         ]);
     }
