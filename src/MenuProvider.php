@@ -4,6 +4,7 @@ namespace Polashmahmud\Menu;
 
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider;
+use Polashmahmud\Menu\Commands\InstallDishari;
 
 class MenuProvider extends ServiceProvider
 {
@@ -45,5 +46,11 @@ class MenuProvider extends ServiceProvider
             __DIR__ . '/../resources/js/Pages' => resource_path("js/Pages/{$dirName}"),
             __DIR__ . '/../resources/js/Components' => resource_path("js/Pages/{$dirName}"),
         ], 'dishari-views');
+
+        if ($this->app->runningInConsole()) {
+            $this->commands([
+                InstallDishari::class,
+            ]);
+        }
     }
 }
