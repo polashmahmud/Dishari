@@ -15,7 +15,7 @@
     "extra": {
         "laravel": {
             "providers": [
-                "Polashmahmud\\Menu\\Providers\\MenuManagementProvider"
+                "Polashmahmud\\Menu\\MenuProvider"
             ]
         }
     }

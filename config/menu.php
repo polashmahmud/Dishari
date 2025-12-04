@@ -1,5 +1,5 @@
 <?php
 
 return [
-    'name' => 'MenuManagement',
+    'name' => 'Menu Name',
 ];

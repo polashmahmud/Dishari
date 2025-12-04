@@ -1,11 +1,11 @@
 <?php
 
-namespace Polashmahmud\Menu\Providers;
+namespace Polashmahmud\Menu;
 
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider;
 
-class MenuManagementProvider extends ServiceProvider
+class MenuProvider extends ServiceProvider
 {
     /**
      * Register services.
@@ -20,7 +20,7 @@ class MenuManagementProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        $this->mergeConfigFrom(__DIR__ . '/../../config/menu.php', 'menumanagement');
+        $this->mergeConfigFrom(__DIR__ . '/../../config/menu.php', 'menu');
 
         // Load migrations
         $this->loadMigrationsFrom(__DIR__ . '/../../database/migrations');

@@ -21,7 +21,7 @@ class MenuController extends Controller
                 return $this->formatMenuForTree($menu);
             });
 
-        return Inertia::render('MenuManagement::Index', [
+        return Inertia::render('Menu::Index', [
             'menuList' => $menus,
         ]);
     }
