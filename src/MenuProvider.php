@@ -38,7 +38,7 @@ class MenuProvider extends ServiceProvider
         ], 'dishari-config');
 
         // 2. Get folder name from config (default is 'Menu')
-        $dirName = config('menu.directory_name', 'dishari');
+        $dirName = config('dishari.directory_name', 'dishari');
 
         // 3. Set dynamic path
         $this->publishes([
