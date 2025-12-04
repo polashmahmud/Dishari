@@ -19,7 +19,7 @@ class InstallDishari extends Command
      *
      * @var string
      */
-    protected $description = 'Install the Dishari package (Publish config, views, dependencies and components)';
+    protected $description = 'Install the Dishari package (Publish config, views, libs, migrations, dependencies and components)';
 
     /**
      * Execute the console command.
@@ -52,21 +52,27 @@ class InstallDishari extends Command
         // 2. Publish Views (Mandatory)
         $this->publishViews($directoryName);
 
-        // 3. Ask to install 'vue-sonner' dependency
+        // 3. Publish Library Files (iconMap)
+        $this->publishLibraryFiles();
+
+        // 4. Manage Migrations (Publish & Run) - (New Step)
+        $this->manageMigrations();
+
+        // 5. Ask to install 'vue-sonner' dependency
         if ($this->confirm('This package requires "vue-sonner". Do you want to install it now?', true)) {
             $this->installPackage('vue-sonner');
         } else {
             $this->warn('Please manually install "vue-sonner" later.');
         }
 
-        // 4. Ask to install 'vue-draggable-plus' dependency
+        // 6. Ask to install 'vue-draggable-plus' dependency
         if ($this->confirm('This package requires "vue-draggable-plus" for drag & drop. Do you want to install it now?', true)) {
             $this->installPackage('vue-draggable-plus');
         } else {
             $this->warn('Please manually install "vue-draggable-plus" later.');
         }
 
-        // 5. Ask to install shadcn-vue components
+        // 7. Ask to install shadcn-vue components
         $this->info('This package relies on the following shadcn-vue components: button, card, dialog, input, label, select, switch.');
 
         if ($this->confirm('Do you want to install these components now?', true)) {
@@ -122,8 +128,52 @@ class InstallDishari extends Command
     }
 
     /**
+     * Publish the library files (e.g., iconMap.ts).
+     */
+    protected function publishLibraryFiles()
+    {
+        $this->info("Publishing library files (iconMap) to: resources/js/lib...");
+
+        $packageRoot = __DIR__ . '/../../';
+        $sourceLib = $packageRoot . 'resources/js/lib';
+        $destinationLib = resource_path('js/lib');
+
+        if (File::exists($sourceLib)) {
+            File::ensureDirectoryExists($destinationLib);
+            File::copyDirectory($sourceLib, $destinationLib);
+            $this->info('Library files published successfully!');
+        } else {
+            $this->error('Source Lib directory not found in the package.');
+        }
+    }
+
+    /**
+     * Manage Migrations: Publish and/or Run.
+     */
+    protected function manageMigrations()
+    {
+        // Ask to publish migration files
+        if ($this->confirm('Do you want to publish the migration files?', true)) {
+            $this->call('vendor:publish', [
+                '--tag' => 'dishari-migrations'
+            ]);
+            $this->info('Migration files published successfully!');
+        } else {
+            $this->comment('Skipping migration publishing (Package migrations will be loaded automatically).');
+        }
+
+        // Ask to run migrations
+        if ($this->confirm('Do you want to run the migrations now?', true)) {
+            $this->info('Running migrations...');
+            $this->call('migrate');
+            $this->info('Migrations executed successfully!');
+        } else {
+            $this->comment('Skipping migration execution.');
+        }
+    }
+
+    /**
      * Install an NPM package using the detected package manager.
-     * Reusable for both vue-sonner and vue-draggable-plus.
      */
     protected function installPackage($packageName)
     {

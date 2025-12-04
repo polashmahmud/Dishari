@@ -29,6 +29,10 @@ class MenuProvider extends ServiceProvider
         // Load migrations
         $this->loadMigrationsFrom(__DIR__ . '/../database/migrations');
 
+        $this->publishes([
+            __DIR__ . '/../database/migrations' => database_path('migrations'),
+        ], 'dishari-migrations');
+
         // Load routes with web middleware group
         Route::middleware('web')
             ->group(__DIR__ . '/../routes/web.php');
