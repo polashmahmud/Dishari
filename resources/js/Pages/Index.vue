@@ -14,7 +14,7 @@ import { ref, computed, watch } from 'vue';
 import MenuDraggableList from './MenuDraggableList.vue';
 import { toast } from 'vue-sonner';
 import { iconOptions } from '@/lib/iconMap';
-import { Plus, Save, Ban } from 'lucide-vue-next';
+import { Plus, Save, Ban, Search } from 'lucide-vue-next';
 
 interface Menu {
     id: number;
@@ -48,6 +48,7 @@ const isCreateDialogOpen = ref(false);
 const isEditDialogOpen = ref(false);
 const editingMenu = ref<Menu | null>(null);
 const menus = ref<Menu[]>(JSON.parse(JSON.stringify(props.menuList)));
+const iconSearch = ref('');
 
 // Watch for prop changes to update local state
 watch(() => props.menuList, (newVal) => {
@@ -77,8 +78,16 @@ const allMenus = computed(() => {
     return flattenMenus(props.menuList);
 });
 
+const filteredIcons = computed(() => {
+    if (!iconSearch.value) return iconOptions;
+    return iconOptions.filter(icon =>
+        icon.name.toLowerCase().includes(iconSearch.value.toLowerCase())
+    );
+});
+
 const openCreateDialog = () => {
     form.reset();
+    iconSearch.value = '';
     isCreateDialogOpen.value = true;
 };
 
@@ -90,6 +99,7 @@ const openEditDialog = (menu: Menu) => {
     form.icon = menu.icon || '';
     form.order = menu.order;
     form.is_active = Boolean(menu.is_active);
+    iconSearch.value = '';
     isEditDialogOpen.value = true;
 };
 
@@ -181,31 +191,17 @@ const saveOrder = () => {
                                 </DialogDescription>
                             </DialogHeader>
                             <div class="grid gap-4 py-4">
-                                <div class="grid gap-2">
-                                    <Label for="title">Title</Label>
-                                    <Input id="title" v-model="form.title" placeholder="Dashboard" />
-                                </div>
-                                <div class="grid gap-2">
-                                    <Label for="url">URL</Label>
-                                    <Input id="url" v-model="form.url" placeholder="/dashboard" />
-                                </div>
-                                <div class="grid gap-2">
-                                    <Label>Icon</Label>
-                                    <div
-                                        class="grid grid-cols-6 gap-2 p-2 border rounded-md max-h-[200px] overflow-y-auto">
-                                        <div class="flex items-center justify-center p-2 rounded-md cursor-pointer hover:bg-accent transition-colors border"
-                                            :class="{ 'bg-primary text-primary-foreground border-primary': !form.icon }"
-                                            @click="form.icon = ''" title="No Icon">
-                                            <Ban class="h-5 w-5" />
-                                        </div>
-                                        <div v-for="icon in iconOptions" :key="icon.name"
-                                            class="flex items-center justify-center p-2 rounded-md cursor-pointer hover:bg-accent transition-colors border"
-                                            :class="{ 'bg-primary text-primary-foreground border-primary': form.icon === icon.name }"
-                                            @click="form.icon = icon.name" :title="icon.name">
-                                            <component :is="icon.component" class="h-5 w-5" />
-                                        </div>
+                                <div class="grid grid-cols-2 gap-4">
+                                    <div class="grid gap-2">
+                                        <Label for="title">Title</Label>
+                                        <Input id="title" v-model="form.title" placeholder="Dashboard" />
+                                    </div>
+                                    <div class="grid gap-2">
+                                        <Label for="url">URL</Label>
+                                        <Input id="url" v-model="form.url" placeholder="/dashboard" />
                                     </div>
                                 </div>
+
                                 <div class="grid gap-2">
                                     <Label for="parent">Parent Menu</Label>
                                     <Select v-model="form.parent_id">
@@ -220,6 +216,33 @@ const saveOrder = () => {
                                         </SelectContent>
                                     </Select>
                                 </div>
+
+                                <div class="grid gap-2">
+                                    <Label>Icon</Label>
+                                    <div class="relative">
+                                        <Search class="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
+                                        <Input v-model="iconSearch" placeholder="Search icons..." class="pl-8" />
+                                    </div>
+                                    <div
+                                        class="grid grid-cols-6 gap-2 p-2 border rounded-md max-h-[200px] overflow-y-auto mt-2">
+                                        <div class="flex items-center justify-center p-2 rounded-md cursor-pointer hover:bg-accent transition-colors border"
+                                            :class="{ 'bg-primary text-primary-foreground border-primary': !form.icon }"
+                                            @click="form.icon = ''" title="No Icon">
+                                            <Ban class="h-5 w-5" />
+                                        </div>
+                                        <div v-for="icon in filteredIcons" :key="icon.name"
+                                            class="flex items-center justify-center p-2 rounded-md cursor-pointer hover:bg-accent transition-colors border"
+                                            :class="{ 'bg-primary text-primary-foreground border-primary': form.icon === icon.name }"
+                                            @click="form.icon = icon.name" :title="icon.name">
+                                            <component :is="icon.component" class="h-5 w-5" />
+                                        </div>
+                                        <div v-if="filteredIcons.length === 0"
+                                            class="col-span-6 text-center text-sm text-muted-foreground py-4">
+                                            No icons found
+                                        </div>
+                                    </div>
+                                </div>
+
                                 <div class="flex items-center space-x-2">
                                     <Switch id="is_active" v-model:checked="form.is_active" />
                                     <Label for="is_active">Active</Label>
@@ -258,30 +281,17 @@ const saveOrder = () => {
                         </DialogDescription>
                     </DialogHeader>
                     <div class="grid gap-4 py-4">
-                        <div class="grid gap-2">
-                            <Label for="edit-title">Title</Label>
-                            <Input id="edit-title" v-model="form.title" />
-                        </div>
-                        <div class="grid gap-2">
-                            <Label for="edit-url">URL</Label>
-                            <Input id="edit-url" v-model="form.url" />
-                        </div>
-                        <div class="grid gap-2">
-                            <Label>Icon</Label>
-                            <div class="grid grid-cols-6 gap-2 p-2 border rounded-md max-h-[200px] overflow-y-auto">
-                                <div class="flex items-center justify-center p-2 rounded-md cursor-pointer hover:bg-accent transition-colors border"
-                                    :class="{ 'bg-primary text-primary-foreground border-primary': !form.icon }"
-                                    @click="form.icon = ''" title="No Icon">
-                                    <Ban class="h-5 w-5" />
-                                </div>
-                                <div v-for="icon in iconOptions" :key="icon.name"
-                                    class="flex items-center justify-center p-2 rounded-md cursor-pointer hover:bg-accent transition-colors border"
-                                    :class="{ 'bg-primary text-primary-foreground border-primary': form.icon === icon.name }"
-                                    @click="form.icon = icon.name" :title="icon.name">
-                                    <component :is="icon.component" class="h-5 w-5" />
-                                </div>
+                        <div class="grid grid-cols-2 gap-4">
+                            <div class="grid gap-2">
+                                <Label for="edit-title">Title</Label>
+                                <Input id="edit-title" v-model="form.title" />
+                            </div>
+                            <div class="grid gap-2">
+                                <Label for="edit-url">URL</Label>
+                                <Input id="edit-url" v-model="form.url" />
                             </div>
                         </div>
+
                         <div class="grid gap-2">
                             <Label for="edit-parent">Parent Menu</Label>
                             <Select v-model="form.parent_id">
@@ -297,6 +307,33 @@ const saveOrder = () => {
                                 </SelectContent>
                             </Select>
                         </div>
+
+                        <div class="grid gap-2">
+                            <Label>Icon</Label>
+                            <div class="relative">
+                                <Search class="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
+                                <Input v-model="iconSearch" placeholder="Search icons..." class="pl-8" />
+                            </div>
+                            <div
+                                class="grid grid-cols-6 gap-2 p-2 border rounded-md max-h-[200px] overflow-y-auto mt-2">
+                                <div class="flex items-center justify-center p-2 rounded-md cursor-pointer hover:bg-accent transition-colors border"
+                                    :class="{ 'bg-primary text-primary-foreground border-primary': !form.icon }"
+                                    @click="form.icon = ''" title="No Icon">
+                                    <Ban class="h-5 w-5" />
+                                </div>
+                                <div v-for="icon in filteredIcons" :key="icon.name"
+                                    class="flex items-center justify-center p-2 rounded-md cursor-pointer hover:bg-accent transition-colors border"
+                                    :class="{ 'bg-primary text-primary-foreground border-primary': form.icon === icon.name }"
+                                    @click="form.icon = icon.name" :title="icon.name">
+                                    <component :is="icon.component" class="h-5 w-5" />
+                                </div>
+                                <div v-if="filteredIcons.length === 0"
+                                    class="col-span-6 text-center text-sm text-muted-foreground py-4">
+                                    No icons found
+                                </div>
+                            </div>
+                        </div>
+
                         <div class="flex items-center space-x-2">
                             <Switch id="edit-is_active" v-model:checked="form.is_active" />
                             <Label for="edit-is_active">Active</Label>

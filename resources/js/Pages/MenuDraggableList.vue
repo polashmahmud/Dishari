@@ -4,6 +4,7 @@ import { Badge } from '@/components/ui/badge';
 import { VueDraggable } from 'vue-draggable-plus';
 import { Edit, Trash2, GripVertical, ChevronRight, ChevronDown } from 'lucide-vue-next';
 import { ref } from 'vue';
+import { iconOptions } from '@/lib/iconMap';
 
 interface Menu {
     id: number;
@@ -53,6 +54,12 @@ const findItem = (items: Menu[], id: number): Menu | undefined => {
     return undefined;
 };
 
+const getIconComponent = (name: string | null) => {
+    if (!name) return null;
+    const icon = iconOptions.find(i => i.name === name);
+    return icon ? icon.component : null;
+};
+
 const isExpanded = (id: number) => expandedItems.value.includes(id);
 </script>
 
@@ -70,16 +77,15 @@ const isExpanded = (id: number) => expandedItems.value.includes(id);
                         <component :is="isExpanded(element.id) ? ChevronDown : ChevronRight"
                             class="h-4 w-4 text-muted-foreground cursor-pointer w-4 hover:text-foreground transition-colors"
                             @click="toggleExpand(element.id)" />
+
+                        <component :is="getIconComponent(element.icon)" class="h-4 w-4 text-muted-foreground"
+                            v-if="element.icon && getIconComponent(element.icon)" />
+
                         <span class="font-medium">{{ element.title }}</span>
                     </div>
 
                     <Badge variant="outline" class="text-xs font-normal text-muted-foreground" v-if="element.url">
                         {{ element.url }}
-                    </Badge>
-
-                    <Badge variant="outline" class="text-xs font-normal text-muted-foreground" v-if="element.icon">
-                        <component :is="element.icon" class="h-3 w-3 mr-1 inline-block" v-if="element.icon" />
-                        {{ element.icon }}
                     </Badge>
                 </div>
 
