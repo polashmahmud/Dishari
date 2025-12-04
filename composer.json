@@ -1,0 +1,22 @@
+{
+    "name": "polashmahmud/menu",
+    "autoload": {
+        "psr-4": {
+            "Polashmahmud\\Menu\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Polash Mahmud",
+            "email": "polashmahmud@gmail.com"
+        }
+    ],
+    "require": {},
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Polashmahmud\\Menu\\Providers\\MenuManagementProvider"
+            ]
+        }
+    }
+}
