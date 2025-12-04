@@ -19,7 +19,7 @@ class InstallDishari extends Command
      *
      * @var string
      */
-    protected $description = 'Install the Dishari package (Publish config and views)';
+    protected $description = 'Install the Dishari package (Publish config, views, dependencies and components)';
 
     /**
      * Execute the console command.
@@ -28,8 +28,7 @@ class InstallDishari extends Command
     {
         $this->info('Starting Dishari installation...');
 
-        // Default directory name if config is not published
-        $directoryName = 'dishari';
+        $directoryName = 'dishari'; // Default name
 
         // 1. Ask to publish the configuration file
         if ($this->confirm('Do you want to publish the configuration file?', true)) {
@@ -39,10 +38,9 @@ class InstallDishari extends Command
 
             $this->info('Configuration published successfully!');
 
-            // Since config is published, ask for custom directory preference
+            // Ask for custom directory preference
             $inputName = $this->ask('What directory name would you like to use for Vue files?', 'dishari');
 
-            // If user provided a name, update the variable and the config file
             if ($inputName) {
                 $directoryName = $inputName;
                 $this->updateConfigFile($directoryName);
@@ -51,16 +49,31 @@ class InstallDishari extends Command
             $this->comment("Skipping configuration publishing. Using default directory: '{$directoryName}'.");
         }
 
-        // 2. Publish Views (Mandatory - No question asked)
-        // Since the package relies on these views, we publish them automatically
-        // based on the $directoryName determined above.
-
+        // 2. Publish Views (Mandatory)
         $this->publishViews($directoryName);
 
-        // 3. Optional: Run migrations prompt
-        // if ($this->confirm('Do you want to run migrations?', false)) {
-        //     $this->call('migrate');
-        // }
+        // 3. Ask to install 'vue-sonner' dependency
+        if ($this->confirm('This package requires "vue-sonner". Do you want to install it now?', true)) {
+            $this->installPackage('vue-sonner');
+        } else {
+            $this->warn('Please manually install "vue-sonner" later.');
+        }
+
+        // 4. Ask to install 'vue-draggable-plus' dependency
+        if ($this->confirm('This package requires "vue-draggable-plus" for drag & drop. Do you want to install it now?', true)) {
+            $this->installPackage('vue-draggable-plus');
+        } else {
+            $this->warn('Please manually install "vue-draggable-plus" later.');
+        }
+
+        // 5. Ask to install shadcn-vue components
+        $this->info('This package relies on the following shadcn-vue components: button, card, dialog, input, label, select, switch.');
+
+        if ($this->confirm('Do you want to install these components now?', true)) {
+            $this->installShadcnComponents();
+        } else {
+            $this->warn('Please manually install the required components later.');
+        }
 
         $this->info('Dishari installation completed successfully! 🚀');
     }
@@ -75,7 +88,6 @@ class InstallDishari extends Command
         if (File::exists($configPath)) {
             $content = File::get($configPath);
 
-            // Regex to find and replace the directory_name value
             $newContent = preg_replace(
                 "/('directory_name'\s*=>\s*)(['\"])(.*?)(['\"])/",
                 "$1'$directoryName'",
@@ -83,10 +95,8 @@ class InstallDishari extends Command
             );
 
             File::put($configPath, $newContent);
-
             $this->info("Configuration updated: Directory set to '{$directoryName}'.");
         } else {
-            // Edge case: If for some reason publish failed or file shouldn't be touched
             $this->warn('Config file not found. Skipping config update.');
         }
     }
@@ -98,25 +108,62 @@ class InstallDishari extends Command
     {
         $this->info("Publishing views to: resources/js/Pages/{$directoryName}...");
 
-        // Define source paths (Package directories)
-        // Assuming this Command file is in src/Commands
         $packageRoot = __DIR__ . '/../../';
         $sourcePages = $packageRoot . 'resources/js/Pages';
-
-        // Define destination paths (User's application directories)
         $destinationPages = resource_path("js/Pages/{$directoryName}");
 
-        // Ensure the source exists before copying
         if (File::exists($sourcePages)) {
-            // Create destination directory if it doesn't exist
             File::ensureDirectoryExists($destinationPages);
-
-            // Copy the directory contents
             File::copyDirectory($sourcePages, $destinationPages);
-
             $this->info('Views published successfully!');
         } else {
             $this->error('Source Pages directory not found in the package.');
         }
+    }
+
+    /**
+     * Install an NPM package using the detected package manager.
+     * Reusable for both vue-sonner and vue-draggable-plus.
+     */
+    protected function installPackage($packageName)
+    {
+        $this->info("Installing {$packageName}...");
+
+        $command = "npm install {$packageName}"; // Default
+
+        if (File::exists(base_path('yarn.lock'))) {
+            $command = "yarn add {$packageName}";
+        } elseif (File::exists(base_path('pnpm-lock.yaml'))) {
+            $command = "pnpm add {$packageName}";
+        } elseif (File::exists(base_path('bun.lockb'))) {
+            $command = "bun add {$packageName}";
+        }
+
+        $this->comment("Running: $command");
+        passthru($command);
+    }
+
+    /**
+     * Install required shadcn-vue components.
+     */
+    protected function installShadcnComponents()
+    {
+        $this->info('Installing shadcn-vue components...');
+
+        $components = ['button', 'card', 'dialog', 'input', 'label', 'select', 'switch'];
+        $componentString = implode(' ', $components);
+
+        $prefix = 'npx shadcn-vue@latest add';
+
+        if (File::exists(base_path('pnpm-lock.yaml'))) {
+            $prefix = 'pnpm dlx shadcn-vue@latest add';
+        } elseif (File::exists(base_path('bun.lockb'))) {
+            $prefix = 'bunx shadcn-vue@latest add';
+        }
+
+        $command = "$prefix $componentString";
+
+        $this->comment("Running: $command");
+        passthru($command);
     }
 }
