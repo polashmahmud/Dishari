@@ -9,5 +9,5 @@ return [
 | resource/js directory name where the Vue JS components will be published.
 |
 */
-    'directory_name' => 'Dishari'
+    'directory_name' => 'dishari'
 ];
