@@ -1,3 +1,6 @@
+
+<img width="2752" height="1536" alt="Gemini_Generated_Image_sovbr3sovbr3sovb" src="https://github.com/user-attachments/assets/4cbf1c1f-dd6f-4b06-aea3-1570a0dae195" />
+
 # Dishari Menu Management
 
 A powerful and flexible menu management package for Laravel applications built with Inertia.js and Vue 3. This package provides a drag-and-drop interface for managing nested menus, complete with icon support and active status toggling.
