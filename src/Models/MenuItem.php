@@ -56,7 +56,7 @@ class MenuItem extends Model
      */
     public function descendants(): HasMany
     {
-        return $this->children()->with('descendants');
+        return $this->hasMany(MenuItem::class, 'parent_id')->orderBy('order')->with('descendants');
     }
 
     /**
@@ -64,7 +64,7 @@ class MenuItem extends Model
      */
     public function activeDescendants(): HasMany
     {
-        return $this->children()->where('is_active', true)->orderBy('order')->with('activeDescendants');
+        return $this->hasMany(MenuItem::class, 'parent_id')->where('is_active', true)->orderBy('order')->with('activeDescendants');
     }
 
     /**

@@ -207,7 +207,7 @@ class MenuController extends Controller
             ? $menu->descendants
             : $menu->children;
 
-        if ($children->isNotEmpty()) {
+        if ($children && $children->isNotEmpty()) {
             $data['children'] = $children->map(function ($child) {
                 return $this->formatMenuForTree($child);
             })->toArray();
