@@ -1,16 +1,19 @@
 {
-    "name": "polashmahmud/menu",
-    "autoload": {
-        "psr-4": {
-            "Polashmahmud\\Menu\\": "src/"
-        }
-    },
+    "name": "polashmahmud/dishari",
+    "description": "A dynamic menu builder for Laravel Inertia Vue Shadcn projects.",
+    "type": "library",
+    "license": "MIT",
     "authors": [
         {
             "name": "Polash Mahmud",
             "email": "polashmahmud@gmail.com"
         }
     ],
+    "autoload": {
+        "psr-4": {
+            "Polashmahmud\\Dishari\\": "src/"
+        }
+    },
     "require": {},
     "extra": {
         "laravel": {
