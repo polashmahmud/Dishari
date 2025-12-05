@@ -42,7 +42,7 @@ return [
     |
     */
     'cache' => [
-        'enabled' => true,
+        'enabled' => false,
         'key' => 'dishari_sidebar_menu', // cache key
         'ttl' => 60 * 60, // cache time in seconds
     ],

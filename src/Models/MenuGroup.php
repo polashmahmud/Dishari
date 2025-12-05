@@ -49,7 +49,7 @@ class MenuGroup extends Model
         return static::active()
             ->orderBy('order')
             ->with(['items' => function ($query) {
-                $query->active()->with('descendants');
+                $query->active()->with('activeDescendants');
             }])
             ->get()
             ->map(function ($group) {

@@ -60,6 +60,14 @@ class MenuItem extends Model
     }
 
     /**
+     * Get all active descendants recursively.
+     */
+    public function activeDescendants(): HasMany
+    {
+        return $this->children()->where('is_active', true)->orderBy('order')->with('activeDescendants');
+    }
+
+    /**
      * Scope to get only root menus (no parent).
      */
     public function scopeRoots($query)
@@ -90,8 +98,13 @@ class MenuItem extends Model
             'permission' => $menu->permission_name,
         ];
 
-        if ($menu->children->isNotEmpty()) {
-            $item['items'] = $menu->children->map(function ($child) {
+        // Use activeDescendants if loaded (to avoid N+1), otherwise fall back to children
+        $children = $menu->relationLoaded('activeDescendants')
+            ? $menu->activeDescendants
+            : $menu->children;
+
+        if ($children->isNotEmpty()) {
+            $item['items'] = $children->map(function ($child) {
                 return static::formatMenuItem($child);
             })->toArray();
         }

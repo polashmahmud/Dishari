@@ -17,7 +17,7 @@ class MenuController extends Controller
     {
         $groups = MenuGroup::orderBy('order')
             ->with(['items' => function ($query) {
-                $query->roots()->with('children'); // Initial load
+                $query->roots()->with('descendants'); // Recursive load
             }])
             ->get()
             ->map(function ($group) {
@@ -202,8 +202,13 @@ class MenuController extends Controller
             'children' => [],
         ];
 
-        if ($menu->children->isNotEmpty()) {
-            $data['children'] = $menu->children->map(function ($child) {
+        // Use descendants if loaded (to avoid N+1), otherwise fall back to children
+        $children = $menu->relationLoaded('descendants')
+            ? $menu->descendants
+            : $menu->children;
+
+        if ($children->isNotEmpty()) {
+            $data['children'] = $children->map(function ($child) {
                 return $this->formatMenuForTree($child);
             })->toArray();
         }
