@@ -20,7 +20,7 @@ A powerful and flexible menu management package for Laravel applications built w
 Install the package via Composer:
 
 ```bash
-composer require polashmahmud/menu
+composer require polashmahmud/dishari
 ```
 
 ### 2. Run the Installer
