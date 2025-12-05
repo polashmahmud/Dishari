@@ -2,9 +2,12 @@
 
 namespace Polashmahmud\Menu;
 
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider;
+use Inertia\Inertia;
 use Polashmahmud\Menu\Commands\InstallDishari;
+use Polashmahmud\Menu\Models\Menu;
 
 class MenuProvider extends ServiceProvider
 {
@@ -24,6 +27,19 @@ class MenuProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        if (config('dishari.auto_share', true)) {
+            Inertia::share('dishari', function () {
+                if (config('dishari.cache.enabled', true)) {
+                    $cacheKey = config('dishari.cache.key', 'dishari_sidebar_menu');
+                    $ttl = config('dishari.cache.ttl', 3600);
+
+                    return Cache::remember($cacheKey, $ttl, fn() => Menu::getTree());
+                }
+
+                return Menu::getTree();
+            });
+        }
+
         $this->mergeConfigFrom(__DIR__ . '/../config/menu.php', 'dishari');
 
         // Load migrations
