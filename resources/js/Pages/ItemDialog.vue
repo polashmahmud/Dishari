@@ -9,6 +9,7 @@ import { useForm } from '@inertiajs/vue3';
 import { ref, computed, watch } from 'vue';
 import { iconOptions } from '@/lib/iconMap';
 import { Ban, Search } from 'lucide-vue-next';
+import InputError from '@/components/InputError.vue';
 
 interface MenuItem {
     id: number;
@@ -159,20 +160,24 @@ const handleSubmit = () => {
                     <div class="grid gap-2">
                         <Label for="item-title">Title</Label>
                         <Input id="item-title" v-model="form.title" placeholder="Dashboard" />
+                        <InputError :message="form.errors.title" />
                     </div>
                     <div class="grid gap-2">
                         <Label for="item-url">URL</Label>
                         <Input id="item-url" v-model="form.url" placeholder="/dashboard" />
+                        <InputError :message="form.errors.url" />
                     </div>
                 </div>
                 <div class="grid grid-cols-2 gap-4">
                     <div class="grid gap-2">
                         <Label for="item-route">Route Name (Optional)</Label>
                         <Input id="item-route" v-model="form.route" placeholder="dashboard.index" />
+                        <InputError :message="form.errors.route" />
                     </div>
                     <div class="grid gap-2">
                         <Label for="item-permission">Permission (Optional)</Label>
                         <Input id="item-permission" v-model="form.permission_name" placeholder="view_dashboard" />
+                        <InputError :message="form.errors.permission_name" />
                     </div>
                 </div>
 
