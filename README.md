@@ -1,14 +1,14 @@
-
-<img width="2752" height="1536" alt="Gemini_Generated_Image_sovbr3sovbr3sovb" src="https://github.com/user-attachments/assets/4cbf1c1f-dd6f-4b06-aea3-1570a0dae195" />
+<img width="2752" height="1536" alt="Dishari Menu Management" src="https://github.com/user-attachments/assets/4cbf1c1f-dd6f-4b06-aea3-1570a0dae195" />
 
 # Dishari Menu Management
 
-A powerful and flexible menu management package for Laravel applications built with Inertia.js and Vue 3. This package provides a drag-and-drop interface for managing nested menus, complete with icon support and active status toggling.
+A powerful and flexible menu management package for Laravel applications built with Inertia.js and Vue 3. This package provides a drag-and-drop interface for managing nested menus, complete with icon support, groups, and active status toggling.
 
 ## Features
 
 - 📱 **Drag & Drop Interface**: Intuitive UI for reordering and nesting menu items.
 - 🌳 **Nested Structure**: Support for unlimited levels of nested submenus.
+- 📂 **Menu Groups**: Organize menus into logical groups (e.g., Platform, Settings).
 - 🎨 **Icon Integration**: Built-in support for Lucide icons with a searchable picker.
 - ⚡ **Inertia.js & Vue 3**: Seamless integration with modern Laravel stacks.
 - 🛠 **Fully Customizable**: Publishable Vue components to match your application's design.
@@ -25,23 +25,21 @@ composer require polashmahmud/menu
 
 ### 2. Run the Installer
 
-Run the `dishari:install` command to publish the configuration, migrations, and frontend assets. This command will also help you install necessary frontend dependencies.
+Run the `dishari:install` command to publish the configuration, migrations, and frontend assets.
 
 ```bash
 php artisan dishari:install
 ```
 
-During the installation, you will be prompted to:
+During installation, you will be asked to provide a **directory name** (default: `dishari`).
+This determines where the frontend files will be published:
 
-- Publish the configuration file.
-- Choose a directory name for the Vue pages (default: `dishari`).
-- Publish the Vue pages and components.
-- Publish the migration file.
-- Install required NPM packages (`lucide-vue-next`, `vue-draggable-plus`, etc.).
+- **Pages**: `resources/js/pages/{directoryName}`
+- **Components**: `resources/js/components/{directoryName}`
 
 ### 3. Run Migrations
 
-Run the migrations to create the `menus` table:
+Run the migrations to create the menu tables:
 
 ```bash
 php artisan migrate
@@ -49,10 +47,75 @@ php artisan migrate
 
 ### 4. Compile Assets
 
-Since this package publishes Vue components to your resources directory, you need to recompile your assets:
+Recompile your assets to include the new components:
 
 ```bash
 npm run dev
+```
+
+## Frontend Integration
+
+To display the dynamic menu in your application, you need to update your Sidebar component (usually `resources/js/components/AppSidebar.vue` or similar).
+
+### 1. Update Menu Data Source
+
+Locate your sidebar component and replace the static menu items with the `useDishari` hook.
+
+**Remove static data like this:**
+
+```typescript
+const mainNavItems: NavItem[] = [
+    {
+        title: 'Dashboard',
+        href: dashboard(),
+        icon: LayoutGrid,
+    },
+];
+```
+
+**Add the dynamic hook:**
+
+```typescript
+import { useDishari } from '@/lib/useDishari';
+
+const { menus: mainNavItems } = useDishari();
+```
+
+### 2. Import the NavMain Component
+
+You need to import the `NavMain` component that was published to your project. The path depends on the **directory name** you chose during installation.
+
+If you chose `dishari` (default):
+
+```typescript
+import NavMain from '@/components/dishari/NavMain.vue';
+```
+
+If you chose `menu`:
+
+```typescript
+import NavMain from '@/components/menu/NavMain.vue';
+```
+
+**Full Example (`AppSidebar.vue`):**
+
+```vue
+<script setup lang="ts">
+import { useDishari } from '@/lib/useDishari';
+// Import from the folder you chose during installation (e.g., 'dishari' or 'menu')
+import NavMain from '@/components/dishari/NavMain.vue';
+
+const { menus: mainNavItems } = useDishari();
+</script>
+
+<template>
+    <Sidebar>
+        <SidebarContent>
+            <!-- Pass the dynamic items to the component -->
+            <NavMain :items="mainNavItems" />
+        </SidebarContent>
+    </Sidebar>
+</template>
 ```
 
 ## Usage
@@ -65,24 +128,15 @@ Once installed, you can access the menu management interface at:
 /menu-management
 ```
 
-### Retrieving the Menu in Your Application
-
-You can retrieve the hierarchical menu tree for use in your frontend (e.g., in your `HandleInertiaRequests` middleware or a specific controller):
-
-```php
-use Polashmahmud\Menu\Models\Menu;
-
-// Get the full tree (active items only by default in some scopes, or filter manually)
-$menuTree = Menu::tree();
-```
-
 ### Configuration
 
-The configuration file is located at `config/dishari.php`. You can customize the directory where the Vue files are stored:
+The configuration file is located at `config/dishari.php`. You can customize the directory name, cache settings, and authentication requirements.
 
 ```php
 return [
-    'directory_name' => 'dishari',
+    'directory_name' => 'dishari', // The folder name for published Vue files
+    'auto_share' => true,          // Automatically share menu data with Inertia
+    // ...
 ];
 ```
 
@@ -93,7 +147,7 @@ return [
 - Inertia.js
 - Vue 3
 - Tailwind CSS
-- Shadcn Vue (recommended for styling consistency)
+- Shadcn Vue (recommended)
 
 ## License
 
