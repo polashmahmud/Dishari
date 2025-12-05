@@ -214,7 +214,7 @@ class InstallDishari extends Command
     {
         $this->info('Installing shadcn-vue components...');
 
-        $components = ['button', 'card', 'dialog', 'input', 'label', 'select', 'switch'];
+        $components = ['button', 'card', 'dialog', 'input', 'label', 'select', 'switch', 'radio-group'];
         $componentString = implode(' ', $components);
 
         $prefix = 'npx shadcn-vue@latest add';
