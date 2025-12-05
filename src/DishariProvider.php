@@ -9,6 +9,8 @@ use Illuminate\Support\ServiceProvider;
 use Inertia\Inertia;
 use Polashmahmud\Dishari\Commands\InstallDishari;
 use Polashmahmud\Dishari\Models\MenuGroup;
+use Polashmahmud\Dishari\Models\MenuItem;
+use Polashmahmud\Dishari\Observers\DishariObserver;
 
 class DishariProvider extends ServiceProvider
 {
@@ -28,6 +30,10 @@ class DishariProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        // Register Observers
+        MenuGroup::observe(DishariObserver::class);
+        MenuItem::observe(DishariObserver::class);
+
         if (config('dishari.auto_share', true)) {
             Inertia::share('dishari', fn() => $this->resolveMenuData());
         }
@@ -78,6 +84,8 @@ class DishariProvider extends ServiceProvider
 
         // 2. if cache is disabled, return data directly (Early Return)
         if (!config('dishari.cache.enabled', true)) {
+            // Clear existing cache to prevent stale data if re-enabled later
+            Cache::forget(config('dishari.cache.key', 'dishari_sidebar_menu'));
             return MenuGroup::getTree();
         }
 
