@@ -1,6 +1,6 @@
 <?php
 
-namespace Polashmahmud\Menu\Commands;
+namespace Polashmahmud\Dishari\Commands;
 
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\File;

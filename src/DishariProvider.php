@@ -1,16 +1,16 @@
 <?php
 
-namespace Polashmahmud\Menu;
+namespace Polashmahmud\Dishari;
 
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider;
 use Inertia\Inertia;
-use Polashmahmud\Menu\Commands\InstallDishari;
-use Polashmahmud\Menu\Models\MenuGroup;
+use Polashmahmud\Dishari\Commands\InstallDishari;
+use Polashmahmud\Dishari\Models\MenuGroup;
 
-class MenuProvider extends ServiceProvider
+class DishariProvider extends ServiceProvider
 {
     /**
      * Register services.

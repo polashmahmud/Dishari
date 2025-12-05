@@ -1,12 +1,12 @@
 <?php
 
-namespace Polashmahmud\Menu\Http\Controllers;
+namespace Polashmahmud\Dishari\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use Inertia\Inertia;
-use Polashmahmud\Menu\Models\MenuGroup;
-use Polashmahmud\Menu\Models\MenuItem;
+use Polashmahmud\Dishari\Models\MenuGroup;
+use Polashmahmud\Dishari\Models\MenuItem;
 
 class MenuController extends Controller
 {

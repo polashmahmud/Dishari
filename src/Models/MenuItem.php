@@ -1,6 +1,6 @@
 <?php
 
-namespace Polashmahmud\Menu\Models;
+namespace Polashmahmud\Dishari\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;

@@ -1,7 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use Polashmahmud\Menu\Http\Controllers\MenuController;
+use Polashmahmud\Dishari\Http\Controllers\MenuController;
 
 Route::middleware(['auth'])->prefix('menu-management')->name('menu-management.')->group(function () {
     Route::get('/', [MenuController::class, 'index'])->name('index');
