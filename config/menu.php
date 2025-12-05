@@ -13,6 +13,17 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Authentication Required
+    |--------------------------------------------------------------------------
+    |
+    | If set to true, the menu will only be visible to logged-in users.
+    | If false, the menu will be visible to guests as well.
+    |
+    */
+    'auth_required' => true,
+
+    /*
+    |--------------------------------------------------------------------------
     | Auto Share via Inertia
     |--------------------------------------------------------------------------
     |

@@ -2,6 +2,7 @@
 
 namespace Polashmahmud\Menu;
 
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider;
@@ -28,16 +29,7 @@ class MenuProvider extends ServiceProvider
     public function boot(): void
     {
         if (config('dishari.auto_share', true)) {
-            Inertia::share('dishari', function () {
-                if (config('dishari.cache.enabled', true)) {
-                    $cacheKey = config('dishari.cache.key', 'dishari_sidebar_menu');
-                    $ttl = config('dishari.cache.ttl', 3600);
-
-                    return Cache::remember($cacheKey, $ttl, fn() => Menu::getTree());
-                }
-
-                return Menu::getTree();
-            });
+            Inertia::share('dishari', fn() => $this->resolveMenuData());
         }
 
         $this->mergeConfigFrom(__DIR__ . '/../config/menu.php', 'dishari');
@@ -71,5 +63,28 @@ class MenuProvider extends ServiceProvider
                 InstallDishari::class,
             ]);
         }
+    }
+
+    /**
+     * Resolve the menu data based on auth and cache config.
+     */
+    protected function resolveMenuData()
+    {
+        // 1. check authentication requirement
+        if (config('dishari.auth_required', true) && !Auth::check()) {
+            return [];
+        }
+
+        // 2. if cache is disabled, return data directly (Early Return)
+        if (!config('dishari.cache.enabled', true)) {
+            return Menu::getTree();
+        }
+
+        // 3. return data from cache
+        return Cache::remember(
+            config('dishari.cache.key', 'dishari_sidebar_menu'),
+            config('dishari.cache.ttl', 3600),
+            fn() => Menu::getTree()
+        );
     }
 }
