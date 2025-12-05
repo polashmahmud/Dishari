@@ -10,6 +10,8 @@ interface Menu {
     id: number;
     title: string;
     url: string | null;
+    route?: string | null;
+    permission_name?: string | null;
     icon: string | null;
     order: number;
     is_active: boolean;
@@ -84,9 +86,18 @@ const isExpanded = (id: number) => expandedItems.value.includes(id);
                         <span class="font-medium">{{ element.title }}</span>
                     </div>
 
-                    <Badge variant="outline" class="text-xs font-normal text-muted-foreground" v-if="element.url">
-                        {{ element.url }}
-                    </Badge>
+                    <div class="flex items-center gap-2 flex-wrap">
+                        <Badge variant="outline" class="text-xs font-normal text-muted-foreground" v-if="element.url">
+                            {{ element.url }}
+                        </Badge>
+                        <Badge variant="outline" class="text-xs font-normal text-muted-foreground" v-if="element.route">
+                            Route: {{ element.route }}
+                        </Badge>
+                        <Badge variant="outline" class="text-xs font-normal text-muted-foreground"
+                            v-if="element.permission_name">
+                            Perm: {{ element.permission_name }}
+                        </Badge>
+                    </div>
                 </div>
 
                 <div class="flex items-center gap-2">

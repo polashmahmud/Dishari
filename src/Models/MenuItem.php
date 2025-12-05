@@ -6,15 +6,20 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
-class Menu extends Model
+class MenuItem extends Model
 {
+    protected $table = 'dishari_menu_items';
+
     protected $fillable = [
+        'menu_group_id',
         'parent_id',
         'title',
         'url',
+        'route',
         'icon',
         'order',
         'is_active',
+        'permission_name',
     ];
 
     protected $casts = [
@@ -23,11 +28,19 @@ class Menu extends Model
     ];
 
     /**
+     * Get the group this item belongs to.
+     */
+    public function group(): BelongsTo
+    {
+        return $this->belongsTo(MenuGroup::class, 'menu_group_id');
+    }
+
+    /**
      * Get the parent menu.
      */
     public function parent(): BelongsTo
     {
-        return $this->belongsTo(Menu::class, 'parent_id');
+        return $this->belongsTo(MenuItem::class, 'parent_id');
     }
 
     /**
@@ -35,7 +48,7 @@ class Menu extends Model
      */
     public function children(): HasMany
     {
-        return $this->hasMany(Menu::class, 'parent_id')->orderBy('order');
+        return $this->hasMany(MenuItem::class, 'parent_id')->orderBy('order');
     }
 
     /**
@@ -63,16 +76,25 @@ class Menu extends Model
     }
 
     /**
-     * Get menu tree structure.
+     * Get menu tree structure grouped by Menu Groups.
      */
     public static function getTree()
     {
-        return static::roots()
-            ->active()
-            ->with('descendants')
+        return MenuGroup::active()
+            ->orderBy('order')
+            ->with(['items' => function ($query) {
+                $query->active()->with('descendants');
+            }])
             ->get()
-            ->map(function ($menu) {
-                return static::formatMenuItem($menu);
+            ->map(function ($group) {
+                return [
+                    'id' => $group->id,
+                    'name' => $group->name,
+                    'key' => $group->key,
+                    'items' => $group->items->map(function ($item) {
+                        return static::formatMenuItem($item);
+                    })->toArray()
+                ];
             });
     }
 
@@ -85,8 +107,10 @@ class Menu extends Model
             'id' => $menu->id,
             'title' => $menu->title,
             'href' => $menu->url,
+            'route' => $menu->route,
             'icon' => $menu->icon,
             'isActive' => $menu->is_active,
+            'permission' => $menu->permission_name,
         ];
 
         if ($menu->children->isNotEmpty()) {
