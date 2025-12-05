@@ -76,32 +76,9 @@ class MenuItem extends Model
     }
 
     /**
-     * Get menu tree structure grouped by Menu Groups.
-     */
-    public static function getTree()
-    {
-        return MenuGroup::active()
-            ->orderBy('order')
-            ->with(['items' => function ($query) {
-                $query->active()->with('descendants');
-            }])
-            ->get()
-            ->map(function ($group) {
-                return [
-                    'id' => $group->id,
-                    'name' => $group->name,
-                    'key' => $group->key,
-                    'items' => $group->items->map(function ($item) {
-                        return static::formatMenuItem($item);
-                    })->toArray()
-                ];
-            });
-    }
-
-    /**
      * Format menu item for frontend.
      */
-    protected static function formatMenuItem($menu)
+    public static function formatMenuItem($menu)
     {
         $item = [
             'id' => $menu->id,

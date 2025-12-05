@@ -40,4 +40,27 @@ class MenuGroup extends Model
     {
         return $query->where('is_active', true);
     }
+
+    /**
+     * Get menu tree structure grouped by Menu Groups.
+     */
+    public static function getTree()
+    {
+        return static::active()
+            ->orderBy('order')
+            ->with(['items' => function ($query) {
+                $query->active()->with('descendants');
+            }])
+            ->get()
+            ->map(function ($group) {
+                return [
+                    'id' => $group->id,
+                    'name' => $group->name,
+                    'key' => $group->key,
+                    'items' => $group->items->map(function ($item) {
+                        return MenuItem::formatMenuItem($item);
+                    })->toArray()
+                ];
+            });
+    }
 }

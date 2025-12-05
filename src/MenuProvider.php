@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider;
 use Inertia\Inertia;
 use Polashmahmud\Menu\Commands\InstallDishari;
-use Polashmahmud\Menu\Models\MenuItem;
+use Polashmahmud\Menu\Models\MenuGroup;
 
 class MenuProvider extends ServiceProvider
 {
@@ -77,14 +77,14 @@ class MenuProvider extends ServiceProvider
 
         // 2. if cache is disabled, return data directly (Early Return)
         if (!config('dishari.cache.enabled', true)) {
-            return MenuItem::getTree();
+            return MenuGroup::getTree();
         }
 
         // 3. return data from cache
         return Cache::remember(
             config('dishari.cache.key', 'dishari_sidebar_menu'),
             config('dishari.cache.ttl', 3600),
-            fn() => MenuItem::getTree()
+            fn() => MenuGroup::getTree()
         );
     }
 }
