@@ -4,7 +4,7 @@ import {
     SidebarGroupLabel,
     SidebarMenu,
 } from '@/components/ui/sidebar';
-import NavMenuItem from '@/components/dishari/NavMenuItem.vue';
+import NavMenuItem from './NavMenuItem.vue';
 
 interface MenuGroup {
     id: number;
