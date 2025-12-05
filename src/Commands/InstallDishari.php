@@ -108,22 +108,36 @@ class InstallDishari extends Command
     }
 
     /**
-     * Manually copy views to the correct directory.
+     * Manually copy views and components to the correct directory.
      */
     protected function publishViews($directoryName)
     {
-        $this->info("Publishing views to: resources/js/Pages/{$directoryName}...");
+        $this->info("Publishing views and components...");
 
         $packageRoot = __DIR__ . '/../../';
-        $sourcePages = $packageRoot . 'resources/js/Pages';
-        $destinationPages = resource_path("js/Pages/{$directoryName}");
+
+        // 1. Publish Pages
+        $sourcePages = $packageRoot . 'resources/js/pages';
+        $destinationPages = resource_path("js/pages/{$directoryName}");
 
         if (File::exists($sourcePages)) {
             File::ensureDirectoryExists($destinationPages);
             File::copyDirectory($sourcePages, $destinationPages);
-            $this->info('Views published successfully!');
+            $this->info("Views published to: resources/js/pages/{$directoryName}");
         } else {
             $this->error('Source Pages directory not found in the package.');
+        }
+
+        // 2. Publish Components
+        $sourceComponents = $packageRoot . 'resources/js/components';
+        $destinationComponents = resource_path("js/components/{$directoryName}");
+
+        if (File::exists($sourceComponents)) {
+            File::ensureDirectoryExists($destinationComponents);
+            File::copyDirectory($sourceComponents, $destinationComponents);
+            $this->info("Components published to: resources/js/components/{$directoryName}");
+        } else {
+            $this->warn('Source Components directory not found in the package.');
         }
     }
 

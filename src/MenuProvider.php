@@ -55,7 +55,8 @@ class MenuProvider extends ServiceProvider
 
         // 3. Set dynamic path
         $this->publishes([
-            __DIR__ . '/../resources/js/Pages' => resource_path("js/pages/{$dirName}"),
+            __DIR__ . '/../resources/js/pages' => resource_path("js/pages/{$dirName}"),
+            __DIR__ . '/../resources/js/components' => resource_path("js/components/{$dirName}"),
         ], 'dishari-views');
 
         if ($this->app->runningInConsole()) {
