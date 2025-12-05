@@ -1,11 +1,12 @@
 <script setup lang="ts">
+import InputError from '@/components/InputError.vue';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { useForm } from '@inertiajs/vue3';
-import { ref, watch } from 'vue';
+import { watch } from 'vue';
 
 interface MenuGroup {
     id: number;
@@ -75,10 +76,12 @@ const handleSubmit = () => {
                 <div class="grid gap-2">
                     <Label for="group-name">Name</Label>
                     <Input id="group-name" v-model="form.name" placeholder="Platform" />
+                    <InputError :message="form.errors.name" />
                 </div>
                 <div class="grid gap-2">
                     <Label for="group-key">Key (Optional)</Label>
                     <Input id="group-key" v-model="form.key" placeholder="platform" />
+                    <InputError :message="form.errors.key" />
                 </div>
                 <div class="grid gap-2">
                     <Label>Status</Label>
