@@ -1,1 +1,14 @@
 /vendor
+/node_modules
+/public/vendor
+/storage
+.DS_Store
+.env
+.env.backup
+.env.local
+.env.*.local
+Homestead.yaml
+Homestead.json
+npm-debug.log
+yarn-error.log
+.pest.php
